@@ -1,0 +1,86 @@
+<%- include('partials/header') %>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+
+    <div class="container section">
+        <h2 class="section-title">Checkout</h2>
+
+        <div class="checkout-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <!-- Order Summary -->
+            <div class="order-summary"
+                style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h3>Order Summary</h3>
+                <p style="font-size: 1.25rem; font-weight: bold; margin: 1rem 0;">Total to Pay: $<%= total.toFixed(2) %>
+                </p>
+
+                <form action="/checkout" method="POST" id="checkout-form">
+                    <input type="hidden" name="total_amount" value="<%= total %>">
+                    <input type="hidden" name="pickup_station_id" id="selected-station-id" required>
+
+                    <div class="form-group">
+                        <label>Selected Pickup Station:</label>
+                        <div id="selected-station-display"
+                            style="padding: 10px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 4px; color: #0369a1;">
+                            Please select a station from the map
+                        </div>
+                        <p id="station-error" class="error" style="display: none; margin-top: 5px;">You must select a
+                            pickup station.</p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full" style="margin-top: 1rem;">Confirm
+                        Order</button>
+                </form>
+            </div>
+
+            <!-- Map Section -->
+            <div class="map-container">
+                <h3>Select Pickup Station</h3>
+                <p style="margin-bottom: 1rem; color: #64748b;">Click on a marker to select your pickup location.</p>
+                <div id="map"
+                    style="height: 400px; width: 100%; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script>
+        // Initialize map centered on "City Center" approximate location
+        var map = L.map('map').setView([40.72, -74.00], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var stations = <% - JSON.stringify(stations) %>;
+        var selectedStationId = null;
+
+        stations.forEach(function (station) {
+            var marker = L.marker([station.latitude, station.longitude]).addTo(map);
+
+            marker.bindPopup(`
+            <b>${station.name}</b><br>
+            ${station.address}<br>
+            <button onclick="selectStation(${station.id}, '${station.name}')" class="btn btn-sm btn-primary" style="margin-top: 5px;">Select This Station</button>
+        `);
+        });
+
+        // Function called from popup button
+        window.selectStation = function (id, name) {
+            document.getElementById('selected-station-id').value = id;
+            document.getElementById('selected-station-display').innerHTML = `<strong>${name}</strong> selected.`;
+            document.getElementById('station-error').style.display = 'none';
+            map.closePopup();
+        };
+
+        document.getElementById('checkout-form').addEventListener('submit', function (e) {
+            if (!document.getElementById('selected-station-id').value) {
+                e.preventDefault();
+                document.getElementById('station-error').style.display = 'block';
+            }
+        });
+    </script>
+
+    <%- include('partials/footer') %>

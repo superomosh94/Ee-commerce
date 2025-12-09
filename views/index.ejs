@@ -1,0 +1,57 @@
+<%- include('partials/header') %>
+
+  <main>
+    <div class="hero">
+      <div class="container text-center">
+        <h2>Welcome to Our Store</h2>
+        <p class="hero-subtitle">Discover the best products at amazing prices.</p>
+      </div>
+    </div>
+
+    <div class="container section">
+      <h3 class="section-title">Featured Products</h3>
+
+      <div class="posts-grid">
+        <% if (products.length> 0) { %>
+          <% products.forEach(product=> { %>
+            <article class="post-card">
+              <div class="post-image"
+                style="background-image: url('<%= product.image_url %>'); background-size: cover; background-position: center; height: 250px;">
+              </div>
+              <div class="post-content">
+                <% if (product.category_name) { %>
+                  <span class="tag">
+                    <%= product.category_name %>
+                  </span>
+                  <% } %>
+                    <h4>
+                      <%= product.name %>
+                    </h4>
+                    <p class="price">$<%= product.price %>
+                    </p>
+                    <p>
+                      <%= product.description.substring(0, 80) %>...
+                    </p>
+
+                    <div class="product-actions" style="margin-top: 15px;">
+                      <% if (locals.user && user.role==='admin' ) { %>
+                        <a href="/admin/edit-product/<%= product.id %>" class="btn btn-outline btn-sm">Edit Product</a>
+                        <% } else { %>
+                          <a href="/product/<%= product.id %>" class="btn btn-outline btn-sm">View Details</a>
+                          <form action="/cart/add" method="POST" style="display: inline;">
+                            <input type="hidden" name="product_id" value="<%= product.id %>">
+                            <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+                          </form>
+                          <% } %>
+                    </div>
+              </div>
+            </article>
+            <% }); %>
+              <% } else { %>
+                <p>No products found.</p>
+                <% } %>
+      </div>
+    </div>
+  </main>
+
+  <%- include('partials/footer') %>
