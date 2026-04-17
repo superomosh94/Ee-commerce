@@ -1,6 +1,4 @@
 -- Seed data for E-commerce
-USE your_database;
-
 -- Insert sample users
 INSERT INTO users (username, email, password, full_name, role) VALUES
 ('admin', 'admin@example.com', '$2b$10$ju6Akc2NtVAca6tuhkrQseiGJL0Lya38t8UlhfgTMCA5SKHoxRSHW', 'Admin User', 'admin'),

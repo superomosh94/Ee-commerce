@@ -1,7 +1,7 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 const mysql = require('mysql2/promise');
 const fs = require('fs').promises;
-const path = require('path');
 
 async function setupDatabase() {
   let connection;
@@ -19,8 +19,9 @@ async function setupDatabase() {
 
     // Reset database (drop and recreate)
     console.log('Resetting database...');
-    await connection.query(`DROP DATABASE IF EXISTS ${process.env.DB_NAME}`);
-    await connection.query(`CREATE DATABASE ${process.env.DB_NAME}`);
+    await connection.query(`DROP DATABASE IF EXISTS \`${process.env.DB_NAME}\``);
+    await connection.query(`CREATE DATABASE \`${process.env.DB_NAME}\``);
+    await connection.query(`USE \`${process.env.DB_NAME}\``);
     console.log('✓ Database reset complete');
 
     // Read and execute schema

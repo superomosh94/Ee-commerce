@@ -1,7 +1,4 @@
 -- Create database
-CREATE DATABASE IF NOT EXISTS your_database;
-USE your_database;
-
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
